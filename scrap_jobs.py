@@ -2,6 +2,7 @@ import helium as he
 from selenium import webdriver
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import time
+import json
 
 # CSS Selectors: https://www.w3schools.com/cssref/css_selectors.php
 # Documentacion Helium: https://selenium-python-helium.readthedocs.io/en/latest/
@@ -19,39 +20,68 @@ driver.maximize_window()
 
 he.set_driver(driver)
 
-he.go_to("https://www.linkedin.com")
+# he.go_to("https://www.linkedin.com/jobs/search?keywords=Java%20jr&location=Argentina&geoId=&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0")
+
+try:
+
+    he.go_to("https://www.linkedin.com/jobs/search")
 
 
-positionIconJob = 4
-# while(not(he.find_all(he.S('li'))) == []):
-#     he.go_to("https://www.linkedin.com")
+    # positionIconJob = 4
+    # spanValue = "Empleos"
 
-# he.wait_until(he.find_all(he.S('li')))
+    # elementExists = False
 
-elementExists = False
+    # ul_icon_job = None
 
-ul_icon_job = None
+    # he.wait_until(he.S("body").exists, timeout_secs=5)
 
-while not elementExists:
-    if (he.find_all(he.S('li'))):
-        ul_icon_job = (he.find_all(he.S('li'))[positionIconJob])
-        he.click(ul_icon_job)
-        elementExists = True
-
-he.wait_until(he.S("#job-search-bar-keywords").exists)
-
-he.click(he.S("#job-search-bar-keywords"))
-
-he.write("java jr")
-
-# ul_icon_job = (he.find_all(he.S('li'))[positionIconJob])
-
-# he.click(ul_icon_job)
-
-# he.click("#job-search-bar-keywords")
-
-# he.write("java jr")
+    # anchors = he.find_all(he.S('a'))
 
 
-# input()
-# # driver.quit()
+    # while not elementExists:
+    #     anchor = he.find_all(he.S("[data-tracking-control-name='guest_homepage-basic_guest_nav_menu_jobs']"))
+    #     if (anchor):
+    #         # ul_icon_job = (he.find_all(he.S('li'))[positionIconJob])
+    #         he.click(anchor[0])
+    #         elementExists = True
+
+    he.wait_until(he.S("body").exists, timeout_secs=2)
+
+    # he.wait_until(he.S("#job-search-bar-location"))
+
+    he.doubleclick(he.S("#job-search-bar-location"))
+
+    he.write("Argentina")
+
+    he.click(he.S("#job-search-bar-keywords"))
+
+    he.write("java jr")
+
+    he.press(he.ENTER)
+
+    he.wait_until(he.S("body").exists, timeout_secs=2)
+
+    anchor_jobs = he.find_all(he.S("[data-tracking-control-name='public_jobs_jserp-result_search-card']"))
+
+
+    with open ('text.txt', 'w', encoding="utf-8") as file:  
+        for anchor in anchor_jobs:
+            anchor_web_element = anchor.web_element
+            link_job = anchor_web_element.get_attribute("href")
+            title_job = anchor_web_element.text
+           
+            filter_jobs = ["java", "nodejs", "node.js", "node", "jr", "backend", "fullstack"]  # Filter jobs
+            for word in filter_jobs:
+                if(word in title_job.lower() or word in link_job.lower()):
+                    link_job_title = anchor_web_element.text + " --- " + link_job
+                    file.write(link_job_title)  
+                    file.write('\n')
+
+    input()
+    driver.quit()
+except TimeoutError:
+    print("La página está atascada. Recargando...")
+    driver.refresh()
+    
+

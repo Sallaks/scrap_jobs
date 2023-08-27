@@ -71,3 +71,5 @@ instance/
 
 # Scrapy stuff:
 .scrapy
+
+*.txt
