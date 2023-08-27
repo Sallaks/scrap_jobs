@@ -1,8 +1,6 @@
 import helium as he
 from selenium import webdriver
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
-import time
-import json
 
 # CSS Selectors: https://www.w3schools.com/cssref/css_selectors.php
 # Documentacion Helium: https://selenium-python-helium.readthedocs.io/en/latest/
@@ -42,24 +40,26 @@ try:
 
     # get jobs
 
-    anchor_jobs = he.find_all(he.S("[data-tracking-control-name='public_jobs_jserp-result_search-card']"))
+    anchor_jobs = he.find_all(
+        he.S("[data-tracking-control-name='public_jobs_jserp-result_search-card']"))
 
     # save jobs
 
-    with open ('text.txt', 'w', encoding="utf-8") as file:  
+    with open('text.txt', 'w', encoding="utf-8") as file:
         for anchor in anchor_jobs:
             anchor_web_element = anchor.web_element
 
             # get important data
             link_job = anchor_web_element.get_attribute("href")
             title_job = anchor_web_element.text
-            
-           #filter jobs
-            filter_jobs = ["java", "nodejs", "node.js", "node", "jr", "backend", "fullstack"]  # Filter jobs
+
+            # Filter jobs
+            filter_jobs = ["java", "nodejs", "node.js", "node",
+                           "jr", "backend", "fullstack"] 
             for word in filter_jobs:
-                if(word in title_job.lower() or word in link_job.lower()):
+                if (word in title_job.lower() or word in link_job.lower()):
                     link_job_title = anchor_web_element.text + " --- " + link_job
-                    file.write(link_job_title)  
+                    file.write(link_job_title)
                     file.write('\n')
 
     input()
@@ -67,5 +67,3 @@ try:
 except TimeoutError:
     print("La página está atascada. Recargando...")
     driver.refresh()
-    
-
