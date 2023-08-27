@@ -14,8 +14,10 @@ def save_jobs_linkedIn(driver):
 
     # set parameters
 
-    he.doubleclick(he.S("#job-search-bar-location"))
+    he.click(he.S("#job-search-bar-location"))
 
+    he.press(he.CONTROL + 'a')
+    
     he.write("Argentina")
 
     he.click(he.S("#job-search-bar-keywords"))
@@ -57,6 +59,55 @@ def save_jobs_linkedIn(driver):
                     file.write('\n')
 
 
+def save_jobs_indeed(driver):
+    he.go_to("https://ar.indeed.com/jobs")
+    he.wait_until(he.S("body").exists, timeout_secs=2)
+
+    filter_jobs = ["java", "java jr", "nodejs",
+                   "node.js", "node", "backend", "fullstack"]
+    anchor_jobs = []
+
+    for page in range(1, 4):  # Cambia 4 por el número total de páginas que deseas recorrer
+
+        div_modal = he.S("#mosaic-desktopserpjapopup")
+        if div_modal.exists():
+            button_close = he.find_all(
+                he.S("#mosaic-desktopserpjapopup div button"))[0]
+            if button_close.exists():
+                he.click(button_close)
+
+        if (page == 1):
+            he.click(he.S("#text-input-what"))
+            he.press(he.CONTROL + 'a')
+            he.write("java jr")
+
+            he.click(he.S("#text-input-where"))
+            he.press(he.CONTROL + 'a')
+            he.write("Argentina")
+            he.press(he.ENTER)
+
+        he.wait_until(he.S("body").exists, timeout_secs=2)
+
+        page_anchors = he.find_all(he.S(".jcs-JobTitle"))
+
+        for anchor in page_anchors:
+            anchor_text = anchor.web_element.text
+            anchor_link = anchor.web_element.get_attribute("href")
+
+            if any(keyword in anchor_text.lower() or keyword in anchor_link.lower() for keyword in filter_jobs):
+                anchor_jobs.append((anchor_text, anchor_link))
+
+        # Click the pagination
+        if page < 3:  # Cambia 3 por el número total de páginas menos uno
+            pagination = he.find_all(he.S(f"[aria-label='{page + 1}']"))[0]
+            he.click(pagination)
+            time.sleep(2)
+
+    with open('text.txt', 'a', encoding="utf-8") as file:
+        for anchor_text, anchor_link in anchor_jobs:
+            file.write(f"{anchor_text} --- {anchor_link}\n")
+
+
 try:
 
     edge_driver = EdgeChromiumDriverManager().install()
@@ -67,6 +118,12 @@ try:
     he.set_driver(driver)
 
     save_jobs_linkedIn(driver)
+
+    print("finish linkedin")
+    save_jobs_indeed(driver)
+    print("finish ineed")
+
+    print("finish program...")
 
     input()
     driver.quit()
