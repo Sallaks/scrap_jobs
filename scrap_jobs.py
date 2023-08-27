@@ -20,35 +20,13 @@ driver.maximize_window()
 
 he.set_driver(driver)
 
-# he.go_to("https://www.linkedin.com/jobs/search?keywords=Java%20jr&location=Argentina&geoId=&trk=public_jobs_jobs-search-bar_search-submit&position=1&pageNum=0")
 
 try:
-
     he.go_to("https://www.linkedin.com/jobs/search")
-
-
-    # positionIconJob = 4
-    # spanValue = "Empleos"
-
-    # elementExists = False
-
-    # ul_icon_job = None
-
-    # he.wait_until(he.S("body").exists, timeout_secs=5)
-
-    # anchors = he.find_all(he.S('a'))
-
-
-    # while not elementExists:
-    #     anchor = he.find_all(he.S("[data-tracking-control-name='guest_homepage-basic_guest_nav_menu_jobs']"))
-    #     if (anchor):
-    #         # ul_icon_job = (he.find_all(he.S('li'))[positionIconJob])
-    #         he.click(anchor[0])
-    #         elementExists = True
 
     he.wait_until(he.S("body").exists, timeout_secs=2)
 
-    # he.wait_until(he.S("#job-search-bar-location"))
+    # set parameters
 
     he.doubleclick(he.S("#job-search-bar-location"))
 
@@ -62,15 +40,21 @@ try:
 
     he.wait_until(he.S("body").exists, timeout_secs=2)
 
+    # get jobs
+
     anchor_jobs = he.find_all(he.S("[data-tracking-control-name='public_jobs_jserp-result_search-card']"))
 
+    # save jobs
 
     with open ('text.txt', 'w', encoding="utf-8") as file:  
         for anchor in anchor_jobs:
             anchor_web_element = anchor.web_element
+
+            # get important data
             link_job = anchor_web_element.get_attribute("href")
             title_job = anchor_web_element.text
-           
+            
+           #filter jobs
             filter_jobs = ["java", "nodejs", "node.js", "node", "jr", "backend", "fullstack"]  # Filter jobs
             for word in filter_jobs:
                 if(word in title_job.lower() or word in link_job.lower()):
