@@ -67,7 +67,7 @@ def save_jobs_indeed(driver):
                    "node.js", "node", "backend", "fullstack"]
     anchor_jobs = []
 
-    for page in range(1, 4):  # Cambia 4 por el número total de páginas que deseas recorrer
+    for page in range(1, 4):
 
         div_modal = he.S("#mosaic-desktopserpjapopup")
         if div_modal.exists():
@@ -98,7 +98,7 @@ def save_jobs_indeed(driver):
                 anchor_jobs.append((anchor_text, anchor_link))
 
         # Click the pagination
-        if page < 3:  # Cambia 3 por el número total de páginas menos uno
+        if page < 3:
             pagination = he.find_all(he.S(f"[aria-label='{page + 1}']"))[0]
             he.click(pagination)
             time.sleep(2)
